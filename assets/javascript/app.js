@@ -19,8 +19,8 @@ var config = {
     // Grab Inputs
     var trainName = $('#trainName').val().trim();
     var trainDes = $('#destinationInput').val().trim();
-    var trainStart = moment($("#trainTime").val().trim()).format('LT');
-    var trainFreq = moment($("#frequency").val().trim(), 'hh:mm').format('LT');
+    var trainStart = moment($("#trainTime").val().trim(), "HH:mm").subtract(10, "years").format("X");
+    var trainFreq = $("#frequency").val().trim();
 
     // Local temp obj to hold data
     var newTrain = {
@@ -54,16 +54,16 @@ var config = {
     var trainStart = snapshot.val().start;
     var trainFreq = snapshot.val().frequency;
 
-    var trainStartNice = moment.unix(trainStart).format("HH:mm");
-
-    // Calculate next arrival
-    var nextArrival = moment().add(trainStart + trainFreq).format('LT');
-    console.log(nextArrival);
-
+    
+    //calculate difference between times
+    var difference = moment().diff(moment.unix(trainStart), "minutes");
+    //time apart(remainder)
+		var timeRemain = moment().diff(moment.unix(trainStart), "minutes") % trainFreq;
     // Calculate minutes away
-    var minAway = moment().startOf(trainStart).add(trainFreq);
-    console.log(minAway); 
-
+    var minAway = trainFreq - timeRemain;
+    //next arrival
+		var nextArrival = moment().add(minAway, "m").format("hh:mm A"); 
+    
     // Create new row
     var newRow = $("<tr>").append(
         $("<td>").text(trainName),
